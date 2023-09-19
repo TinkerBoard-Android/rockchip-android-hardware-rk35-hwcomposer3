@@ -367,7 +367,9 @@ void ComposerCommandEngine::executeSetLayerSidebandStream(int64_t display, int64
     auto bufferReleaser = mResources->createReleaser(false);
     auto err = mResources->getLayerSidebandStream(display, layer, handle,
                                                   stream, bufferReleaser.get());
-    if (err) {
+    //-----------------------rk code----------
+    if (err == 0) {
+    //----------------------------------------
         err = mHal->setLayerSidebandStream(display, layer, stream);
     }
     if (err) {
