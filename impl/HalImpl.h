@@ -67,6 +67,7 @@ class HalImpl : public IComposerHal {
     int32_t getDisplayPhysicalOrientation(int64_t display, common::Transform* orientation) override;
     int32_t getDozeSupport(int64_t display, bool& outSupport) override;
     int32_t getHdrCapabilities(int64_t display, HdrCapabilities* caps) override;
+    int32_t getOverlaySupport(OverlayProperties* caps) override;
     int32_t getMaxVirtualDisplayCount(int32_t* count) override;
     int32_t getPerFrameMetadataKeys(int64_t display,
                                     std::vector<PerFrameMetadataKey>* keys) override;
@@ -88,6 +89,8 @@ class HalImpl : public IComposerHal {
     int32_t setBootDisplayConfig(int64_t display, int32_t config) override;
     int32_t clearBootDisplayConfig(int64_t display) override;
     int32_t getPreferredBootDisplayConfig(int64_t display, int32_t* config) override;
+    int32_t getHdrConversionCapabilities(std::vector<common::HdrConversionCapability>*) override;
+    int32_t setHdrConversionStrategy(const common::HdrConversionStrategy&, common::Hdr*) override;
     int32_t setAutoLowLatencyMode(int64_t display, bool on) override;
     int32_t setClientTarget(int64_t display, buffer_handle_t target,
                             const ndk::ScopedFileDescriptor& fence, common::Dataspace dataspace,

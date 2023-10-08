@@ -236,6 +236,12 @@ ndk::ScopedAStatus ComposerClient::getHdrCapabilities(int64_t display, HdrCapabi
     return TO_BINDER_STATUS(err);
 }
 
+ndk::ScopedAStatus ComposerClient::getOverlaySupport(OverlayProperties* caps) {
+    DEBUG_FUNC();
+    auto err = mHal->getOverlaySupport(caps);
+    return TO_BINDER_STATUS(err);
+}
+
 ndk::ScopedAStatus ComposerClient::getMaxVirtualDisplayCount(int32_t* count) {
     DEBUG_FUNC();
     auto err = mHal->getMaxVirtualDisplayCount(count);
@@ -334,6 +340,21 @@ ndk::ScopedAStatus ComposerClient::clearBootDisplayConfig(int64_t display) {
 ndk::ScopedAStatus ComposerClient::getPreferredBootDisplayConfig(int64_t display, int32_t* config) {
     DEBUG_FUNC();
     auto err = mHal->getPreferredBootDisplayConfig(display, config);
+    return TO_BINDER_STATUS(err);
+}
+
+ndk::ScopedAStatus ComposerClient::getHdrConversionCapabilities(
+        std::vector<common::HdrConversionCapability>* hdrConversionCapabilities) {
+    DEBUG_FUNC();
+    auto err = mHal->getHdrConversionCapabilities(hdrConversionCapabilities);
+    return TO_BINDER_STATUS(err);
+}
+
+ndk::ScopedAStatus ComposerClient::setHdrConversionStrategy(
+        const common::HdrConversionStrategy& hdrConversionStrategy,
+        common::Hdr* preferredHdrOutputType) {
+    DEBUG_FUNC();
+    auto err = mHal->setHdrConversionStrategy(hdrConversionStrategy, preferredHdrOutputType);
     return TO_BINDER_STATUS(err);
 }
 

@@ -428,6 +428,10 @@ int32_t HalImpl::getHdrCapabilities(int64_t display, HdrCapabilities* caps) {
     return HWC2_ERROR_NONE;
 }
 
+int32_t HalImpl::getOverlaySupport([[maybe_unused]] OverlayProperties* caps) {
+    return HWC2_ERROR_UNSUPPORTED;
+}
+
 int32_t HalImpl::getMaxVirtualDisplayCount(int32_t* count) {
     uint32_t hwcCount = mDispatch.getMaxVirtualDisplayCount(mDevice);
     h2a::translate(hwcCount, *count);
@@ -529,6 +533,14 @@ int32_t HalImpl::clearBootDisplayConfig([[maybe_unused]] int64_t display) {
 
 int32_t HalImpl::getPreferredBootDisplayConfig([[maybe_unused]] int64_t display, [[maybe_unused]] int32_t* config) {
     /* Drmhwc2 not support this feature */
+    return HWC2_ERROR_UNSUPPORTED;
+}
+
+int32_t HalImpl::getHdrConversionCapabilities(std::vector<common::HdrConversionCapability>*) {
+    return HWC2_ERROR_UNSUPPORTED;
+}
+
+int32_t HalImpl::setHdrConversionStrategy(const common::HdrConversionStrategy&, common::Hdr*) {
     return HWC2_ERROR_UNSUPPORTED;
 }
 
