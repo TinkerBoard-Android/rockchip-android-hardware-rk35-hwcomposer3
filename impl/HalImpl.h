@@ -136,6 +136,7 @@ class HalImpl : public IComposerHal {
     int32_t setVsyncEnabled(int64_t display, bool enabled) override;
     int32_t getDisplayIdleTimerSupport(int64_t display, bool& outSupport) override;
     int32_t setIdleTimerEnabled(int64_t display, int32_t timeout) override;
+    int32_t setRefreshRateChangedCallbackDebugEnabled(int64_t display, bool enabled) override;
     int32_t getRCDLayerSupport(int64_t display, bool& outSupport) override;
     int32_t setLayerBlockingRegion(
             int64_t display, int64_t layer,

@@ -131,6 +131,8 @@ public:
                                          const ndk::ScopedFileDescriptor& releaseFence) override;
     ndk::ScopedAStatus setVsyncEnabled(int64_t display, bool enabled) override;
     ndk::ScopedAStatus setIdleTimerEnabled(int64_t display, int32_t timeout) override;
+    ndk::ScopedAStatus setRefreshRateChangedCallbackDebugEnabled(int64_t /* display */,
+                                                                 bool /* enabled */) override;
 
 protected:
     ::ndk::SpAIBinder createBinder() override;

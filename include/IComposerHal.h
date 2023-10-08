@@ -222,6 +222,7 @@ class IComposerHal {
     virtual int32_t setExpectedPresentTime(
             int64_t display, const std::optional<ClockMonotonicTimestamp> expectedPresentTime) = 0;
     virtual int32_t setIdleTimerEnabled(int64_t display, int32_t timeout) = 0;
+    virtual int32_t setRefreshRateChangedCallbackDebugEnabled(int64_t display, bool enabled) = 0;
     virtual int32_t getRCDLayerSupport(int64_t display, bool& outSupport) = 0;
     virtual int32_t setLayerBlockingRegion(
             int64_t display, int64_t layer,
