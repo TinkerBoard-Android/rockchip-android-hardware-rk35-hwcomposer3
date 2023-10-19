@@ -192,7 +192,7 @@ void HalImpl::dumpDebugInfo(std::string* output) {
     mDispatch.dump(mDevice, &len, buf.data());
     buf.resize(len + 1);
     buf[len] = '\0';
-    
+
     *output = std::string(buf.begin(), buf.end());
 }
 
@@ -320,19 +320,26 @@ int32_t HalImpl::getDisplayAttribute(int64_t display, int32_t config,
 }
 
 int32_t HalImpl::getDisplayBrightnessSupport([[maybe_unused]] int64_t display, bool& outSupport) {
-    /* Drmhwc2 not support this feature */
-    outSupport = false;
 
-    return HWC2_ERROR_NONE;
+    if (!mDispatch.getDisplayBrightnessSupport) {
+        return HWC2_ERROR_UNSUPPORTED;
+    }
+    return mDispatch.getDisplayBrightnessSupport(mDevice, display, &outSupport);
 }
 
 int32_t HalImpl::getDisplayCapabilities([[maybe_unused]] int64_t display,
                                         std::vector<DisplayCapability>* caps) {
-    /* Drmhwc2 not support this feature */
-    if (caps == nullptr)
-        return HWC2_ERROR_BAD_PARAMETER;
+    if (!mDispatch.getDisplayCapabilities) {
+        return HWC2_ERROR_UNSUPPORTED;
+    }
 
-    caps->push_back(DisplayCapability::INVALID);
+    uint32_t count = 0;
+    RET_IF_ERR(mDispatch.getDisplayCapabilities(mDevice, display, &count, nullptr));
+
+    std::vector<uint32_t> hwcCaps(count);
+    RET_IF_ERR(mDispatch.getDisplayCapabilities(mDevice, display, &count, hwcCaps.data()));
+
+    h2a::translate(hwcCaps, *caps);
 
     return HWC2_ERROR_NONE;
 }
@@ -349,6 +356,9 @@ int32_t HalImpl::getDisplayConfigs(int64_t display, std::vector<int32_t>* config
 }
 
 int32_t HalImpl::getDisplayConnectionType(int64_t display, DisplayConnectionType* outType) {
+    if (!mDispatch.getDisplayConnectionType) {
+        return HWC2_ERROR_UNSUPPORTED;
+    }
     uint32_t hwcType = HWC2_DISPLAY_CONNECTION_TYPE_INTERNAL;
     RET_IF_ERR(mDispatch.getDisplayConnectionType(mDevice, display, &hwcType));
     h2a::translate(hwcType, *outType);
@@ -356,9 +366,19 @@ int32_t HalImpl::getDisplayConnectionType(int64_t display, DisplayConnectionType
     return HWC2_ERROR_NONE;
 }
 
-int32_t HalImpl::getDisplayIdentificationData([[maybe_unused]] int64_t display,
-                                                [[maybe_unused]] DisplayIdentification *id) {
-    /* Drmhwc2 not support this feature */
+int32_t HalImpl::getDisplayIdentificationData(int64_t display,
+                                              DisplayIdentification *id) {
+    if (!mDispatch.getDisplayIdentificationData) {
+        return HWC2_ERROR_UNSUPPORTED;
+    }
+    uint8_t port;
+    uint32_t count = 0;
+    RET_IF_ERR(mDispatch.getDisplayIdentificationData(mDevice, display, &port, &count, nullptr));
+
+    id->data.resize(count);
+    RET_IF_ERR(mDispatch.getDisplayIdentificationData(mDevice, display, &port, &count, id->data.data()));
+
+    h2a::translate(port, id->port);
     return HWC2_ERROR_NONE;
 }
 
@@ -441,7 +461,7 @@ int32_t HalImpl::getMaxVirtualDisplayCount(int32_t* count) {
 
 int32_t HalImpl::getPerFrameMetadataKeys([[maybe_unused]] int64_t display,
                                          [[maybe_unused]] std::vector<PerFrameMetadataKey>* keys) {
-    /* Drmhwc2 not support this feature */
+/* Drmhwc2 not support this feature */
     return HWC2_ERROR_UNSUPPORTED;
 }
 
@@ -459,21 +479,34 @@ int32_t HalImpl::getReadbackBufferFence([[maybe_unused]] int64_t display,
 
 int32_t HalImpl::getRenderIntents([[maybe_unused]] int64_t display, ColorMode mode,
                                   std::vector<RenderIntent>* intents) {
-    /* Drmhwc2 not support this feature */
-    if ((mode != ColorMode::NATIVE) || (intents == nullptr))
-        return HWC2_ERROR_BAD_PARAMETER;
+    if (!mDispatch.getRenderIntents) {
+        return HWC2_ERROR_UNSUPPORTED;
+    }
+    int32_t hwcMode;
+    uint32_t count = 0;
+    a2h::translate(mode, hwcMode);
+    RET_IF_ERR(mDispatch.getRenderIntents(mDevice, display, hwcMode, &count, nullptr));
 
-    intents->push_back(RenderIntent::COLORIMETRIC);
+    std::vector<int32_t> hwcIntents(count);
+    RET_IF_ERR(mDispatch.getRenderIntents(mDevice, display, hwcMode, &count, hwcIntents.data()));
+
+    h2a::translate(hwcIntents, *intents);
 
     return HWC2_ERROR_NONE;
 }
 
 int32_t HalImpl::getSupportedContentTypes([[maybe_unused]] int64_t display, std::vector<ContentType>* types) {
-    /* Drmhwc2 not support this feature */
-    if (types == nullptr)
-        return HWC2_ERROR_BAD_PARAMETER;
+    if (!mDispatch.getSupportedContentTypes) {
+        return HWC2_ERROR_UNSUPPORTED;
+    }
 
-    types->push_back(ContentType::NONE);
+    uint32_t count = 0;
+    RET_IF_ERR(mDispatch.getSupportedContentTypes(mDevice, display, &count, nullptr));
+
+    std::vector<uint32_t> hwcTypes(count);
+    RET_IF_ERR(mDispatch.getSupportedContentTypes(mDevice, display, &count, hwcTypes.data()));
+
+    h2a::translate(hwcTypes, *types);
 
     return HWC2_ERROR_NONE;
 }
@@ -546,7 +579,10 @@ int32_t HalImpl::setHdrConversionStrategy(const common::HdrConversionStrategy&, 
 
 int32_t HalImpl::setAutoLowLatencyMode([[maybe_unused]] int64_t display, [[maybe_unused]] bool on) {
     /* Drmhwc2 not support this feature */
-    return HWC2_ERROR_UNSUPPORTED;
+    if (!mDispatch.getRenderIntents) {
+        return HWC2_ERROR_UNSUPPORTED;
+    }
+    return mDispatch.setAutoLowLatencyMode(mDevice, display, on);;
 }
 
 int32_t HalImpl::setClientTarget(int64_t display, buffer_handle_t target,
@@ -596,14 +632,19 @@ int32_t HalImpl::setColorTransform(int64_t display, const std::vector<float>& ma
 }
 
 int32_t HalImpl::setContentType([[maybe_unused]] int64_t display, ContentType contentType) {
-    if (contentType == ContentType::NONE)
+    if (!mDispatch.setContentType) {
         return HWC2_ERROR_UNSUPPORTED;
-    
-    return HWC2_ERROR_NONE;
+    }
+    int32_t type;
+    a2h::translate(contentType, type);
+    return mDispatch.setContentType(mDevice, display, type);
 }
 
 int32_t HalImpl::setDisplayBrightness([[maybe_unused]] int64_t display, [[maybe_unused]] float brightness) {
-    return HWC2_ERROR_UNSUPPORTED;
+    if (!mDispatch.setDisplayBrightness) {
+        return HWC2_ERROR_UNSUPPORTED;
+    }
+    return mDispatch.setDisplayBrightness(mDevice, display, brightness);;
 }
 
 int32_t HalImpl::setDisplayedContentSamplingEnabled(

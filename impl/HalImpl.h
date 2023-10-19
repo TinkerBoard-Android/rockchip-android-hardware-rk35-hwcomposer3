@@ -232,10 +232,27 @@ protected:
             ALOGE("failed to get hwcomposer2 functions %s(%d)", __FUNCTION__, __LINE__);
             return false;
         }
-
+        /* composer 2.2 */
+        if (!initDispatch(HWC2_FUNCTION_GET_RENDER_INTENTS, &mDispatch.getRenderIntents) ||
+            !initDispatch(HWC2_FUNCTION_SET_COLOR_MODE_WITH_RENDER_INTENT, &mDispatch.setColorModeWithRenderIntent)) {
+            ALOGE("failed to get hwcomposer2.4 functions %s(%d)", __FUNCTION__, __LINE__);
+            return false;
+        }
+        /* composer 2.3 */
+        if (!initDispatch(HWC2_FUNCTION_GET_DISPLAY_IDENTIFICATION_DATA, &mDispatch.getDisplayIdentificationData) ||
+            !initDispatch(HWC2_FUNCTION_GET_DISPLAY_CAPABILITIES, &mDispatch.getDisplayCapabilities) ||
+            !initDispatch(HWC2_FUNCTION_GET_DISPLAY_BRIGHTNESS_SUPPORT, &mDispatch.getDisplayBrightnessSupport) ||
+            !initDispatch(HWC2_FUNCTION_SET_DISPLAY_BRIGHTNESS, &mDispatch.setDisplayBrightness)) {
+            ALOGE("failed to get hwcomposer2.4 functions %s(%d)", __FUNCTION__, __LINE__);
+            return false;
+        }
         /* composer 2.4 */
         if (!initDispatch(HWC2_FUNCTION_GET_DISPLAY_CONNECTION_TYPE, &mDispatch.getDisplayConnectionType) ||
-            !initDispatch(HWC2_FUNCTION_GET_DISPLAY_VSYNC_PERIOD, &mDispatch.getDisplayVsyncPeriod)) {
+            !initDispatch(HWC2_FUNCTION_GET_DISPLAY_VSYNC_PERIOD, &mDispatch.getDisplayVsyncPeriod) ||
+            !initDispatch(HWC2_FUNCTION_SET_ACTIVE_CONFIG_WITH_CONSTRAINTS, &mDispatch.setActiveConfigWithConstraints) ||
+            !initDispatch(HWC2_FUNCTION_SET_AUTO_LOW_LATENCY_MODE, &mDispatch.setAutoLowLatencyMode) ||
+            !initDispatch(HWC2_FUNCTION_GET_SUPPORTED_CONTENT_TYPES, &mDispatch.getSupportedContentTypes)||
+            !initDispatch(HWC2_FUNCTION_SET_CONTENT_TYPE, &mDispatch.setContentType)) {
             ALOGE("failed to get hwcomposer2.4 functions %s(%d)", __FUNCTION__, __LINE__);
             return false;
         }
@@ -299,9 +316,38 @@ private:
         HWC2_PFN_SET_VSYNC_ENABLED setVsyncEnabled;
         HWC2_PFN_VALIDATE_DISPLAY validateDisplay;
 
+        /* composer 2.2 */
+        HWC2_PFN_SET_LAYER_FLOAT_COLOR setLayerFloatColor;
+        HWC2_PFN_SET_LAYER_PER_FRAME_METADATA setLayerPerFrameMetadata;
+        HWC2_PFN_GET_PER_FRAME_METADATA_KEYS getPerFrameMetadataKeys;
+        HWC2_PFN_SET_READBACK_BUFFER setReadbackBuffer;
+        HWC2_PFN_GET_READBACK_BUFFER_ATTRIBUTES getReadbackBufferAttributes;
+        HWC2_PFN_GET_READBACK_BUFFER_FENCE getReadbackBufferFence;
+        HWC2_PFN_GET_RENDER_INTENTS getRenderIntents;
+        HWC2_PFN_SET_COLOR_MODE_WITH_RENDER_INTENT setColorModeWithRenderIntent;
+        HWC2_PFN_GET_DATASPACE_SATURATION_MATRIX getDataspaceSaturationMatrix;
+
+        /* composer 2.3 */
+        HWC2_PFN_GET_DISPLAY_IDENTIFICATION_DATA getDisplayIdentificationData;
+        HWC2_PFN_SET_LAYER_COLOR_TRANSFORM setLayerColorTransform;
+        HWC2_PFN_GET_DISPLAYED_CONTENT_SAMPLING_ATTRIBUTES getDisplayedContentSamplingAttributes;
+        HWC2_PFN_SET_DISPLAYED_CONTENT_SAMPLING_ENABLED setDisplayedContentSamplingEnabled;
+        HWC2_PFN_GET_DISPLAYED_CONTENT_SAMPLE getDisplayedContentSample;
+        HWC2_PFN_GET_DISPLAY_CAPABILITIES getDisplayCapabilities;
+        HWC2_PFN_SET_LAYER_PER_FRAME_METADATA_BLOBS setLayerPerFrameMetadataBlobs;
+        HWC2_PFN_GET_DISPLAY_BRIGHTNESS_SUPPORT getDisplayBrightnessSupport;
+        HWC2_PFN_SET_DISPLAY_BRIGHTNESS setDisplayBrightness;
+
         /* composer 2.4 */
         HWC2_PFN_GET_DISPLAY_CONNECTION_TYPE getDisplayConnectionType;
         HWC2_PFN_GET_DISPLAY_VSYNC_PERIOD getDisplayVsyncPeriod;
+        HWC2_PFN_SET_ACTIVE_CONFIG_WITH_CONSTRAINTS setActiveConfigWithConstraints;
+        HWC2_PFN_SET_AUTO_LOW_LATENCY_MODE setAutoLowLatencyMode;
+        HWC2_PFN_GET_SUPPORTED_CONTENT_TYPES getSupportedContentTypes;
+        HWC2_PFN_SET_CONTENT_TYPE setContentType;
+        HWC2_PFN_GET_CLIENT_TARGET_PROPERTY getClientTargetProperty;
+        HWC2_PFN_SET_LAYER_GENERIC_METADATA setLayerGenericMetadata;
+        HWC2_PFN_GET_LAYER_GENERIC_METADATA_KEY getLayerGenericMetadataKey;
     } mDispatch = {};
 };
 
