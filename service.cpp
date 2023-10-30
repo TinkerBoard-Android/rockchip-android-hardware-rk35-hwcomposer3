@@ -57,8 +57,11 @@ int main(int /*argc*/, char* argv[]) {
 
     // Thread pool for system libbinder (via libbinder_ndk) for aidl services
     // IComposer and IDisplay
+#ifndef USE_HWC_PROXY_SERVICE
+	// If use hwc proxy service, ABinderProcess already init on drmhwc2.
     ABinderProcess_setThreadPoolMaxThreadCount(5);
     ABinderProcess_startThreadPool();
+#endif
     ABinderProcess_joinThreadPool();
 
     return EXIT_FAILURE;  // should not reach

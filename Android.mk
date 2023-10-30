@@ -70,6 +70,11 @@ LOCAL_CFLAGS += -DUSES_HWC_SERVICES
 LOCAL_HEADER_LIBRARIES += libbinder_headers
 endif
 
+ifeq ($(strip $(BOARD_USES_HWC_PROXY_SERVICE)),true)
+LOCAL_CFLAGS += \
+	-DUSE_HWC_PROXY_SERVICE=1
+endif
+
 LOCAL_VINTF_FRAGMENTS = hwc3-default.xml
 LOCAL_INIT_RC := hwc3-rk.rc
 
