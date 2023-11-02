@@ -274,6 +274,11 @@ void ComposerCommandEngine::executeSetLayerCursorPosition(int64_t display, int64
     }
 }
 
+#define RK_BUFFER_SLOT_SHIFT 8
+#define RK_BUFFER_CACHE_SHIFT 16
+#define RK_BUFFER_USE_CACHE_FLAG 1
+#define RK_BUFFER_USE_UNCACHE_FLAG (1 << 1)
+
 void ComposerCommandEngine::executeSetLayerBuffer(int64_t display, int64_t layer,
                                                   const Buffer& buffer) {
     bool useCache = !buffer.handle;
@@ -285,6 +290,18 @@ void ComposerCommandEngine::executeSetLayerBuffer(int64_t display, int64_t layer
     auto err = mResources->getLayerBuffer(display, layer, buffer.slot, useCache,
                                           handle, hwcBuffer, bufferReleaser.get());
     if (!err) {
+        int32_t cache_slot_mask = ((buffer.slot & 0xff) << RK_BUFFER_SLOT_SHIFT);
+        if(useCache){
+            cache_slot_mask |= (RK_BUFFER_USE_CACHE_FLAG << RK_BUFFER_CACHE_SHIFT);
+        }else{
+            cache_slot_mask |= (RK_BUFFER_USE_UNCACHE_FLAG << RK_BUFFER_CACHE_SHIFT);
+        }
+        ndk::ScopedFileDescriptor fd_mask = ndk::ScopedFileDescriptor(cache_slot_mask * (-1));
+        err = mHal->setLayerBuffer(display, layer, hwcBuffer, fd_mask);
+        if (err) {
+            LOG(ERROR) << __func__ << "slot=" << buffer.slot << " useCache=" << useCache;
+        }
+
         err = mHal->setLayerBuffer(display, layer, hwcBuffer, buffer.fence);
         if (err) {
             LOG(ERROR) << __func__ << ": setLayerBuffer err " << err;
