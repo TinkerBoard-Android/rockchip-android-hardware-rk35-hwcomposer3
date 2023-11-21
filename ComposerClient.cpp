@@ -410,6 +410,9 @@ ndk::ScopedAStatus ComposerClient::setReadbackBuffer(
     if (!err) {
         err = mHal->setReadbackBuffer(display, readbackBuffer, releaseFence);
     }
+    //handle from android::makeFromAidl should be deleted with native_handle_delete.
+    if(buffer)
+        native_handle_delete((native_handle_t*)buffer);
     return TO_BINDER_STATUS(err);
 }
 

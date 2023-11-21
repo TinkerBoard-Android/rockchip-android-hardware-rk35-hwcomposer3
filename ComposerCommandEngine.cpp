@@ -179,6 +179,9 @@ void ComposerCommandEngine::executeSetClientTarget(int64_t display, const Client
         LOG(ERROR) << __func__ << " getDisplayClientTarget : err " << err;
         mWriter->setError(mCommandIndex, err);
     }
+    //handle from android::makeFromAidl should be deleted with native_handle_delete.
+    if(handle)
+        native_handle_delete((native_handle_t*)handle);
 }
 
 void ComposerCommandEngine::executeSetOutputBuffer(uint64_t display, const Buffer& buffer) {
@@ -200,6 +203,9 @@ void ComposerCommandEngine::executeSetOutputBuffer(uint64_t display, const Buffe
         LOG(ERROR) << __func__ << " getDisplayOutputBuffer: err " << err;
         mWriter->setError(mCommandIndex, err);
     }
+    //handle from android::makeFromAidl should be deleted with native_handle_delete.
+    if(handle)
+        native_handle_delete((native_handle_t*)handle);
 }
 
 void ComposerCommandEngine::executeSetExpectedPresentTimeInternal(
@@ -311,6 +317,9 @@ void ComposerCommandEngine::executeSetLayerBuffer(int64_t display, int64_t layer
         LOG(ERROR) << __func__ << ": getLayerBuffer err " << err;
         mWriter->setError(mCommandIndex, err);
     }
+    //handle from android::makeFromAidl should be deleted with native_handle_delete.
+    if(handle)
+        native_handle_delete((native_handle_t*)handle);
 }
 
 void ComposerCommandEngine::executeSetLayerSurfaceDamage(int64_t display, int64_t layer,
@@ -393,6 +402,9 @@ void ComposerCommandEngine::executeSetLayerSidebandStream(int64_t display, int64
         LOG(ERROR) << __func__ << ": err " << err;
         mWriter->setError(mCommandIndex, err);
     }
+    //handle from android::makeFromAidl should be deleted with native_handle_delete.
+    if(handle)
+        native_handle_delete((native_handle_t*)handle);
 }
 
 void ComposerCommandEngine::executeSetLayerSourceCrop(int64_t display, int64_t layer,

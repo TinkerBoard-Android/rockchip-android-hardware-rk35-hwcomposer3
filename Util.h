@@ -19,6 +19,7 @@
 #include <android-base/logging.h>
 #include <string_view>
 #include <utils/Trace.h>
+#include <cutils/native_handle.h>
 
 // #define LOG_FUNC
 #define TRACE_FUNC
