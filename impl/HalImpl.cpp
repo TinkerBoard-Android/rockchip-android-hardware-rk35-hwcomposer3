@@ -608,7 +608,8 @@ int32_t HalImpl::setColorMode(int64_t display, ColorMode mode, RenderIntent inte
     a2h::translate(mode, hwcMode);
     a2h::translate(intent, hwcIntent);
 
-    UNUSED(hwcIntent);
+    if ((hwcMode < 0) || (hwcIntent < 0))
+        return HWC2_ERROR_BAD_PARAMETER;
 
     return mDispatch.setColorMode(mDevice, display, hwcMode);
 }
