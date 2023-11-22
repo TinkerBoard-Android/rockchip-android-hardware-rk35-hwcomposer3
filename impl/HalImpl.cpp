@@ -261,8 +261,11 @@ int32_t HalImpl::createVirtualDisplay(uint32_t width, uint32_t height, AidlPixel
     int32_t hwcFormat;
     a2h::translate(format, hwcFormat);
 
-    RET_IF_ERR(mDispatch.createVirtualDisplay(mDevice, width, height, &hwcFormat, (hwc2_display_t *)outDisplay->display));
+    hwc2_display_t hwcDisplay = getDisplayId(HWC_DISPLAY_VIRTUAL, 0);
 
+    RET_IF_ERR(mDispatch.createVirtualDisplay(mDevice, width, height, &hwcFormat, &hwcDisplay));
+
+    h2a::translate(hwcDisplay, outDisplay->display);
     h2a::translate(hwcFormat, outDisplay->format);
 
     return HWC2_ERROR_NONE;

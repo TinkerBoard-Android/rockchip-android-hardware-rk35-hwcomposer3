@@ -23,6 +23,12 @@
 #include <utils/String8.h>
 #include <hardware/hwcomposer2.h>
 
+static constexpr uint32_t DISPLAYID_MASK_LEN = 8;
+
+constexpr uint32_t getDisplayId(int32_t displayType, int32_t displayIndex) {
+    return (displayType << DISPLAYID_MASK_LEN) | displayIndex;
+}
+
 namespace aidl::android::hardware::graphics::composer3::impl {
 
 // Forward aidl call to Exynos HWC
