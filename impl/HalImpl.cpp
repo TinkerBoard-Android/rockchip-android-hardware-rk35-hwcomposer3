@@ -939,7 +939,7 @@ int32_t HalImpl::setLayerBlockingRegion(
 
 int32_t HalImpl::getDisplayIdleTimerSupport([[maybe_unused]] int64_t display, [[maybe_unused]] bool& outSupport) {
     /* Drmhwc2 not support this feature */
-    return HWC2_ERROR_UNSUPPORTED;
+    return HWC2_ERROR_NONE;
 }
 
 int32_t HalImpl::setRefreshRateChangedCallbackDebugEnabled([[maybe_unused]] int64_t display,
