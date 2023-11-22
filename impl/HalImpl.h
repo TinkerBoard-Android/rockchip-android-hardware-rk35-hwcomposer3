@@ -252,6 +252,7 @@ protected:
             !initDispatch(HWC2_FUNCTION_SET_ACTIVE_CONFIG_WITH_CONSTRAINTS, &mDispatch.setActiveConfigWithConstraints) ||
             !initDispatch(HWC2_FUNCTION_SET_AUTO_LOW_LATENCY_MODE, &mDispatch.setAutoLowLatencyMode) ||
             !initDispatch(HWC2_FUNCTION_GET_SUPPORTED_CONTENT_TYPES, &mDispatch.getSupportedContentTypes)||
+            !initDispatch(HWC2_FUNCTION_SET_ACTIVE_CONFIG_WITH_CONSTRAINTS, &mDispatch.setActiveConfigWithConstraints)||
             !initDispatch(HWC2_FUNCTION_SET_CONTENT_TYPE, &mDispatch.setContentType)) {
             ALOGE("failed to get hwcomposer2.4 functions %s(%d)", __FUNCTION__, __LINE__);
             return false;

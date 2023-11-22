@@ -538,20 +538,20 @@ int32_t HalImpl::setActiveConfig(int64_t display, int32_t config) {
 }
 
 int32_t HalImpl::setActiveConfigWithConstraints(
-            [[maybe_unused]] int64_t display, int32_t config,
-            [[maybe_unused]] const VsyncPeriodChangeConstraints& vsyncPeriodChangeConstraints,
+            int64_t display, int32_t config,
+            const VsyncPeriodChangeConstraints& vsyncPeriodChangeConstraints,
             VsyncPeriodChangeTimeline* timeline) {
     hwc2_config_t hwcConfig;
+    hwc_vsync_period_change_constraints_t hwcVsyncPeriodChangeConstraints;
+    hwc_vsync_period_change_timeline_t hwcOutTimeline;
 
     a2h::translate(config, hwcConfig);
+    a2h::translate(vsyncPeriodChangeConstraints, hwcVsyncPeriodChangeConstraints);
 
-    if (timeline == nullptr)
-        return HWC2_ERROR_BAD_PARAMETER;
+    RET_IF_ERR(mDispatch.setActiveConfigWithConstraints(mDevice, display, hwcConfig, &hwcVsyncPeriodChangeConstraints, &hwcOutTimeline));
 
-    if (hwcConfig > 0)
-        return HWC2_ERROR_BAD_CONFIG;
-    else
-        return HWC2_ERROR_NONE;
+    h2a::translate(hwcOutTimeline, *timeline);
+    return HWC2_ERROR_NONE;
 }
 
 int32_t HalImpl::setBootDisplayConfig([[maybe_unused]] int64_t display, [[maybe_unused]] int32_t config) {
