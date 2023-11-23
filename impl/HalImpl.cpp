@@ -804,7 +804,17 @@ int32_t HalImpl::setLayerVisibleRegion(int64_t display, int64_t layer,
     return mDispatch.setLayerVisibleRegion(mDevice, display, hwcLayer, region);
 }
 
-int32_t HalImpl::setLayerBrightness([[maybe_unused]] int64_t display, [[maybe_unused]] int64_t layer, [[maybe_unused]] float brightness) {
+int32_t HalImpl::setLayerBrightness([[maybe_unused]] int64_t display, [[maybe_unused]] int64_t layer, float brightness) {
+    if (!std::isfinite(brightness)) {
+        ALOGW("%s layer brightness %f is not a valid floating value", __func__, brightness);
+        return HWC2_ERROR_BAD_PARAMETER;
+    }
+
+    if (brightness > 1.f || brightness < 0.f) {
+        ALOGW("%s Brightness is out of [0, 1] range: %f", __func__, brightness);
+        return HWC2_ERROR_BAD_PARAMETER;
+    }
+
     return HWC2_ERROR_NONE;
 }
 
