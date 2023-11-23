@@ -949,7 +949,7 @@ int32_t HalImpl::getDisplayIdleTimerSupport([[maybe_unused]] int64_t display, [[
 int32_t HalImpl::setRefreshRateChangedCallbackDebugEnabled([[maybe_unused]] int64_t display,
         [[maybe_unused]] bool enabled) {
     /* Drmhwc2 not support this feature */
-    return HWC2_ERROR_NONE;
+    return HWC2_ERROR_UNSUPPORTED;
 }
 
 } // namespace aidl::android::hardware::graphics::composer3::impl
