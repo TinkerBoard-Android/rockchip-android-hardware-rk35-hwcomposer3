@@ -701,6 +701,11 @@ int32_t HalImpl::setLayerCompositionType(int64_t display, int64_t layer, Composi
     a2h::translate(type, hwcType);
     a2h::translate(layer, hwcLayer);
 
+    if (type == Composition::DISPLAY_DECORATION) {
+        ALOGW("%s: CompositionType %d can not support", __func__, hwcType);
+        return HWC2_ERROR_UNSUPPORTED;
+    }
+
     return mDispatch.setLayerCompositionType(mDevice, display, hwcLayer, hwcType);
 }
 
@@ -893,8 +898,6 @@ int32_t HalImpl::validateDisplay(int64_t display, std::vector<int64_t>* outChang
         return err;
     }
 
-    RET_IF_ERR(mDispatch.getChangedCompositionTypes(mDevice, display, &typesCount, nullptr, nullptr));
-
     std::vector<hwc2_layer_t> hwcChangedLayers(typesCount);
     std::vector<int32_t> hwcCompositionTypes(typesCount);
     RET_IF_ERR(mDispatch.getChangedCompositionTypes(mDevice, display,
@@ -902,8 +905,6 @@ int32_t HalImpl::validateDisplay(int64_t display, std::vector<int64_t>* outChang
                                                     hwcCompositionTypes.data()));
 
     int32_t displayReqs;
-
-    RET_IF_ERR(mDispatch.getDisplayRequests(mDevice, display, &displayReqs, &reqsCount, nullptr, nullptr));
 
     std::vector<hwc2_layer_t> hwcRequestedLayers(reqsCount);
     outRequestMasks->resize(reqsCount);
