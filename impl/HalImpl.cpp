@@ -420,9 +420,18 @@ int32_t HalImpl::getDisplayedContentSamplingAttributes(
     return HWC2_ERROR_UNSUPPORTED;
 }
 
+
 int32_t HalImpl::getDisplayPhysicalOrientation([[maybe_unused]] int64_t display,
                                                [[maybe_unused]] common::Transform* orientation) {
-    return HWC2_ERROR_UNSUPPORTED;
+
+    uint32_t hwcType = HWC2_DISPLAY_CONNECTION_TYPE_INTERNAL;
+    /* just use this function to judge whether display is valid */
+    if (mDispatch.getDisplayConnectionType(mDevice, display, &hwcType) != HWC2_ERROR_NONE)
+        return HWC2_ERROR_BAD_DISPLAY;
+
+    *orientation = common::Transform::NONE;
+
+    return HWC2_ERROR_NONE;
 }
 
 int32_t HalImpl::getDozeSupport(int64_t display, bool& support) {
