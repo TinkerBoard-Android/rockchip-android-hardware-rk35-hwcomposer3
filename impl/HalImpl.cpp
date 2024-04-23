@@ -526,7 +526,7 @@ int32_t HalImpl::getSupportedContentTypes([[maybe_unused]] int64_t display, std:
 int32_t HalImpl::presentDisplay(int64_t display, ndk::ScopedFileDescriptor& fence,
                        std::vector<int64_t>* outLayers,
                        std::vector<ndk::ScopedFileDescriptor>* outReleaseFences) {
-    int32_t hwcOutPresentFence;
+    int32_t hwcOutPresentFence = -1;
     RET_IF_ERR(mDispatch.presentDisplay(mDevice, display, &hwcOutPresentFence));
     h2a::translate(hwcOutPresentFence, fence);
 
@@ -534,7 +534,7 @@ int32_t HalImpl::presentDisplay(int64_t display, ndk::ScopedFileDescriptor& fenc
     RET_IF_ERR(mDispatch.getReleaseFences(mDevice, display, &count, nullptr, nullptr));
 
     std::vector<hwc2_layer_t> hwcLayers(count);
-    std::vector<int32_t> hwcReleaseFences(count);
+    std::vector<int32_t> hwcReleaseFences(count, -1);
     RET_IF_ERR(mDispatch.getReleaseFences(mDevice, display, &count, hwcLayers.data(), hwcReleaseFences.data()));
 
     h2a::translate(hwcLayers, *outLayers);
@@ -601,7 +601,7 @@ int32_t HalImpl::setClientTarget(int64_t display, buffer_handle_t target,
                                  const ndk::ScopedFileDescriptor& fence,
                                  common::Dataspace dataspace,
                                  const std::vector<common::Rect>& damage) {
-    int32_t hwcAcquireFence;
+    int32_t hwcAcquireFence = -1;
     int32_t hwcDataspace;
     std::vector<hwc_rect_t> hwcDamage;
 
@@ -679,7 +679,7 @@ int32_t HalImpl::setLayerBlendMode(int64_t display, int64_t layer, common::Blend
 
 int32_t HalImpl::setLayerBuffer(int64_t display, int64_t layer, buffer_handle_t buffer,
                                 const ndk::ScopedFileDescriptor& acquireFence) {
-    int32_t hwcAcquireFence;
+    int32_t hwcAcquireFence = -1;
     hwc2_layer_t hwcLayer = 0;
     a2h::translate(acquireFence, hwcAcquireFence);
     a2h::translate(layer, hwcLayer);
@@ -842,7 +842,7 @@ int32_t HalImpl::setLayerZOrder(int64_t display, int64_t layer, uint32_t z) {
 
 int32_t HalImpl::setOutputBuffer(int64_t display, buffer_handle_t buffer,
                                  const ndk::ScopedFileDescriptor& releaseFence) {
-    int32_t hwcReleaseFence;
+    int32_t hwcReleaseFence = -1;
     a2h::translate(releaseFence, hwcReleaseFence);
 
     auto err = mDispatch.setOutputBuffer(mDevice, display, buffer, hwcReleaseFence);
