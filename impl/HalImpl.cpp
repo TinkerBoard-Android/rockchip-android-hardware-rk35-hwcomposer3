@@ -700,7 +700,7 @@ int32_t HalImpl::setLayerColor(int64_t display, int64_t layer, Color color) {
 int32_t HalImpl::setLayerColorTransform([[maybe_unused]] int64_t display, [[maybe_unused]] int64_t layer,
                                         [[maybe_unused]] const std::vector<float>& matrix) {
     /* Drmhwc2 not support this feature */
-    return HWC2_ERROR_UNSUPPORTED;
+    return HWC2_ERROR_NONE;
 }
 
 int32_t HalImpl::setLayerCompositionType(int64_t display, int64_t layer, Composition type) {
@@ -855,9 +855,6 @@ int32_t HalImpl::setOutputBuffer(int64_t display, buffer_handle_t buffer,
 }
 
 int32_t HalImpl::setPowerMode(int64_t display, PowerMode mode) {
-    if (mode == PowerMode::ON_SUSPEND || mode == PowerMode::DOZE_SUSPEND) {
-        return HWC2_ERROR_UNSUPPORTED;
-    }
 
     int32_t hwcMode;
     a2h::translate(mode, hwcMode);
